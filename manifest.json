@@ -1,0 +1,12 @@
+{
+	"id": "workspace-folder-hider",
+	"name": "Workspace Folder Hider",
+	"version": "0.5.0",
+	"minAppVersion": "1.4.0",
+	"description": "Hides folders and files in a particular workspace.",
+	"author": "JEBoothjr",
+	"authorUrl": "https://github.com/JEBoothjr",
+	"fundingUrl": "https://ko-fi.com/jeboothjr",
+  "helpUrl": "https://github.com/JEBoothjr/workspace-folder-hider",
+	"isDesktopOnly": false
+}
