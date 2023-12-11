@@ -2,15 +2,16 @@ import { App, FileSystemAdapter } from 'obsidian';
 import { IWorkspaceFolderHiderSetting } from './interfaces';
 
 /*
-I await a formal API to obtain the workspace info.
+Creates a "lite" copy of the internal workspaces to align with the plugin settings.
+This is to ensure that we are always working with the correct workspaces.
 */
-
 const getInternalWorkspaces = async (app:App): any => {
   let workspacesFile = await FileSystemAdapter.readLocalFile(`${app.vault.adapter.basePath}/.obsidian/workspaces.json`);
   let workspaces = JSON.parse(String.fromCharCode.apply(null, new Uint8Array(workspacesFile)));
   
   let workspaceNames = Object.keys(workspaces.workspaces);
   let result:any = { workspaces: {} };
+
   for(let i=0; i<workspaceNames.length; i++){
     result.workspaces[workspaceNames[i]] = { folders: [] }; // this structure must match the settings structure
   }

@@ -14,8 +14,10 @@ export class WorkspaceFolderHiderSettingTab extends PluginSettingTab {
     await this.plugin.saveSettings();
   }
 
-	display(): void {
+	async display(): void {
 		const {containerEl} = this;
+
+    await this.plugin.syncSettings();
 
 		containerEl.empty();
 
