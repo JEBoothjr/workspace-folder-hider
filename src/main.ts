@@ -1,10 +1,11 @@
-import { App, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { Plugin } from 'obsidian';
 import { WorkspaceFolderHiderSettingTab } from './WorkspaceFolderHiderSettingTab';
 import { IWorkspaceFolderHiderSettings, IWorkspaceFolderHiderSetting } from './interfaces';
 import { getInternalWorkspaces, getInternalActiveWorkspace } from './utils';
 
 
 const DEFAULT_SETTINGS: IWorkspaceFolderHiderSettings = {
+  active: "",
 	workspaces: {}
 }
 
@@ -14,18 +15,18 @@ export default class WorkspaceFolderHiderPlugin extends Plugin {
   static readonly REFRESH_RATE = 25;
 
   async onload() {
+    await this.loadSettings();
+
     this.app.workspace.onLayoutReady(
       async () => {
-        await this.loadSettings();
         this.addSettingTab(new WorkspaceFolderHiderSettingTab(this.app, this));
-        window.setTimeout(() => {
-          this.renderFolders();
-        }, this.REFRESH_RATE);
       });
 
     this.registerEvent(this.app.workspace.on(
       "layout-change",
-      () => {
+      async () => {
+        this.settings.active = await getInternalActiveWorkspace(this.app);
+        await this.saveData(this.settings);
         window.setTimeout(() => {
           this.renderFolders();
         }, this.REFRESH_RATE);
@@ -33,13 +34,23 @@ export default class WorkspaceFolderHiderPlugin extends Plugin {
 	}
 
   async renderFolders() {
+    console.log(this.settings);
     // Obsidian fires off an initial "layout-change" before "onLayoutReady", so settings haven't loaded yet.
     // I don't want to load settings on every "layout-change", though...
     if(!this.settings){
       return;
     }
-    const activeWorkspace = getInternalActiveWorkspace(this.app);
+
+    console.log("[ RENDER ]");
+    
+    // Remove existing classes as we'll reapply them.
+    Array.from(document.querySelectorAll('.hidden-workspace-folder')).forEach(
+      (el) => el.classList.remove('hidden-workspace-folder')
+    );
+
+    const activeWorkspace = this.settings.active;
     const workspaceSettings = this.settings.workspaces[activeWorkspace];
+
     if(!workspaceSettings || !workspaceSettings.folders || !workspaceSettings.folders.length) return;
 
     workspaceSettings.folders.forEach((folder:any) => {

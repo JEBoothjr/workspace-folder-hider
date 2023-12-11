@@ -1,21 +1,28 @@
-import { App } from 'obsidian';
+import { App, FileSystemAdapter } from 'obsidian';
 import { IWorkspaceFolderHiderSetting } from './interfaces';
 
 /*
 I await a formal API to obtain the workspace info.
 */
 
-const getInternalWorkspaces = (app:App): any => {
-  let workspaceNames = Object.keys(app.internalPlugins.plugins.workspaces.instance.workspaces);
+const getInternalWorkspaces = async (app:App): any => {
+  let workspacesFile = await FileSystemAdapter.readLocalFile(`${app.vault.adapter.basePath}/.obsidian/workspaces.json`);
+  let workspaces = JSON.parse(String.fromCharCode.apply(null, new Uint8Array(workspacesFile)));
+  
+  let workspaceNames = Object.keys(workspaces.workspaces);
   let result:any = { workspaces: {} };
   for(let i=0; i<workspaceNames.length; i++){
     result.workspaces[workspaceNames[i]] = { folders: [] }; // this structure must match the settings structure
   }
+  result.active = workspaces.active;
   return result;
 }
 
-const getInternalActiveWorkspace = (app:App): string => {
-  return app.internalPlugins.plugins.workspaces.instance.activeWorkspace;
+const getInternalActiveWorkspace = async (app:App): string => {
+  let workspacesFile = await FileSystemAdapter.readLocalFile(`${app.vault.adapter.basePath}/.obsidian/workspaces.json`);
+  let workspaces = JSON.parse(String.fromCharCode.apply(null, new Uint8Array(workspacesFile)));
+
+  return workspaces.active;
 }
 
 // Trims the folder path of any whitespace and removes any leading slashes

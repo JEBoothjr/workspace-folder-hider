@@ -16,6 +16,7 @@ export interface IWorkspaceFolderHiderSetting {
 }
 
 export interface IWorkspaceFolderHiderSettings {
+  active: string,
 	workspaces: {
     [name: string]: IWorkspaceFolderHiderSetting
   };
