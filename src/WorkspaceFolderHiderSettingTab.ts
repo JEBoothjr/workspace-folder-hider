@@ -1,5 +1,5 @@
 import { App, PluginSettingTab, Setting } from 'obsidian';
-import { WorkspaceFolderHiderPlugin } from 'main';
+import { WorkspaceFolderHiderPlugin } from './main';
 import { prepareSettingsForRendering, prepareSettingsForSaving } from './utils';
 
 export class WorkspaceFolderHiderSettingTab extends PluginSettingTab {
@@ -10,12 +10,14 @@ export class WorkspaceFolderHiderSettingTab extends PluginSettingTab {
 		this.plugin = plugin;
 	}
 
-  hide(): void {
-    this.plugin.renderFolders();
+  async hide(): Promise<void> {
+    await this.plugin.saveSettings();
   }
 
-	display(): void {
+	async display(): void {
 		const {containerEl} = this;
+
+    await this.plugin.syncSettings();
 
 		containerEl.empty();
 
@@ -23,15 +25,15 @@ export class WorkspaceFolderHiderSettingTab extends PluginSettingTab {
 
     for(const workspace in workspaces){
       const settingsDisplay = prepareSettingsForRendering(this.plugin.settings.workspaces[workspace]);
+      let workspaceLabel = (workspace === this.plugin.settings.active) ? `${workspace} (current)` : workspace;
 
       new Setting(containerEl)
-        .setName(workspace)
+        .setName(workspaceLabel)
         .setDesc('Input which folders are hidden in this workspace, one per line and case-sensitive.')
         .addTextArea(text => text
           .setValue(settingsDisplay)
           .onChange(async (txt) => {
             prepareSettingsForSaving(this.plugin.settings.workspaces[workspace], txt);
-            await this.plugin.saveSettings();
           }));
     }
 

@@ -11,12 +11,14 @@
  * }
  */
 
-export interface IWorkspaceFolderHiderSetting {
-	folders: Array<String>
-}
-
 export interface IWorkspaceFolderHiderSettings {
+  active: string,
 	workspaces: {
     [name: string]: IWorkspaceFolderHiderSetting
   };
 }
+
+export interface IWorkspaceFolderHiderSetting {
+	folders: Array<String>
+}
+
