@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "workspace-folder-hider",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "Hide folders and/or files for different workspaces.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
